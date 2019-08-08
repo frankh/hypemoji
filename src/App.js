@@ -3,13 +3,18 @@ import logo from './logo.svg';
 import './App.css';
 import Dropzone from 'react-dropzone';
 import Jimp from 'jimp';
-const { GifFrame, GifUtil, GifCodec } = require('gifwrap');
+import { Line } from 'rc-progress';
+import { GifFrame, GifUtil, GifCodec } from 'gifwrap';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { images: [], previews: [], frames: 10, delay: 10, rainbow: false };
+    this.state = { images: [], previews: [], frames: 10, delay: 10, rainbow: false, progress: null };
     this.onDrop = this.onDrop.bind(this);
+  }
+
+  sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   onDrop(imageFiles) {
@@ -17,22 +22,35 @@ class App extends React.Component {
       images: imageFiles,
     });
 
-    Promise.all(imageFiles.map((im) => (
-      this.hypify(im, this.state.frames, this.state.delay)
-    ))).then((previews) => {
-      this.setState({previews: previews});
+    setTimeout(() => {
+      Promise.all(imageFiles.map((im) => (
+        this.hypify(im, this.state.frames, this.state.delay)
+      ))).then((previews) => {
+        this.setState({previews: previews});
+        this.setState({
+          progress: null
+        });
+      });
+    })
+  }
+
+  async progress(n) {
+    this.setState({
+      progress: n
     });
+    await this.sleep(1);
   }
 
   async hypify(image, numFrames, delay) {
     console.log(`Hypifying with ${numFrames} frames and ${delay} delay`);
     const frames = [];
 
+    await this.progress(0);
     let jimg_tmp = await Jimp.read(await image.arrayBuffer());
     jimg_tmp.scaleToFit(1, 1);
-
     let averageColor = jimg_tmp.getPixelColor(0, 0);
 
+    await this.progress(0.05);
     let jimg = await Jimp.read(await image.arrayBuffer());
     jimg.scaleToFit(128, 128);
     let {r, g, b} = Jimp.intToRGBA(averageColor);
@@ -43,6 +61,7 @@ class App extends React.Component {
         { apply: 'red', params: [100] }
       ])
     }
+    await this.progress(0.07);
 
     const width = jimg.getWidth(), height = jimg.getHeight();
     for(var i = 0; i < numFrames; i++) {
@@ -66,12 +85,17 @@ class App extends React.Component {
       frame.bitmap.data = jimg.bitmap.data.slice();
       // Have to resolve this here for some reason or all frames are the same
       await jimg.getBase64Async('image/png');
-      console.log(`done frame ${i}/${numFrames}`);
+      await this.progress((i + 1) / numFrames);
     }
 
     const codec = new GifCodec();
     GifUtil.quantizeDekker(frames);
     let gif = await codec.encodeGif(frames, {loops: 0})
+
+    this.setState({
+      progress: null
+    });
+
     return 'data:image/gif;base64,' + btoa(String.fromCharCode.apply(null, gif.buffer));
   }
 
@@ -105,6 +129,7 @@ class App extends React.Component {
   }
 
   render() {
+    console.log('render ' + this.state.progress);
     return (
       <div>
         {this.state.previews.length > 0 ? (
@@ -133,6 +158,9 @@ class App extends React.Component {
             </div>
           )}
         </Dropzone>
+        {this.state.progress != null ? (
+          <Line percent={this.state.progress * 100} />
+        ): null}
         {this.state.previews.map((dataUri, i) => (
           <a key={`image-${i}`} href={dataUri} download>
             <img src={dataUri}/>
