@@ -47,18 +47,20 @@ class App extends React.Component {
 
     await this.progress(0);
     let jimg_tmp = await Jimp.read(await image.arrayBuffer());
-    jimg_tmp.scaleToFit(1, 1);
+    jimg_tmp.resize(1, 1);
     let averageColor = jimg_tmp.getPixelColor(0, 0);
 
     await this.progress(0.05);
     let jimg = await Jimp.read(await image.arrayBuffer());
-    jimg.scaleToFit(128, 128);
+    if( jimg.getWidth() >= 128 || jimg.getHeight() >= 128 ) {
+      jimg.scaleToFit(128, 128);
+    }
     let {r, g, b} = Jimp.intToRGBA(averageColor);
     if( Math.max(r, g, b) - Math.min(r, g, b) < 30 ) {
       console.log("not vibrant enough, adding red")
       // Not enough color contrast, have to tint first
       jimg.color([
-        { apply: 'red', params: [100] }
+        { apply: 'red', params: [200] }
       ])
     }
     await this.progress(0.07);
