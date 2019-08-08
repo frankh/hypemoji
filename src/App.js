@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import ImageUploader from 'react-images-upload';
+import Dropzone from 'react-dropzone';
 import Jimp from 'jimp';
 const { GifFrame, GifUtil, GifCodec } = require('gifwrap');
 
@@ -34,7 +34,7 @@ class App extends React.Component {
     let averageColor = jimg_tmp.getPixelColor(0, 0);
 
     let jimg = await Jimp.read(await image.arrayBuffer());
-
+    jimg.scaleToFit(128, 128);
     let {r, g, b} = Jimp.intToRGBA(averageColor);
     if( Math.max(r, g, b) - Math.min(r, g, b) < 30 ) {
       console.log("not vibrant enough, adding red")
@@ -77,7 +77,7 @@ class App extends React.Component {
 
   framesChange = (e) => {
     let value = parseInt(e.target.value);
-    if( value <= 0 ) {
+    if( value <= 0 || value ) {
       value = 1;
     }
 
@@ -125,15 +125,18 @@ class App extends React.Component {
             <button type="submit" name="submit" onClick={this.regenerate}>Regenerate</button>
           </form>
         ) : null}
-        <ImageUploader
-          withIcon={true}
-          buttonText='Choose images'
-          onChange={this.onDrop}
-          imgExtension={['.jpg', '.gif', '.png', '.gif']}
-          maxFileSize={5242880}
-        />
+        <Dropzone onDrop={this.onDrop} multiple={false}>
+          {({getRootProps, getInputProps}) => (
+            <div className="dropzone" {...getRootProps()}>
+              <p>Drag image here, or click to select</p>
+              <input {...getInputProps()} />
+            </div>
+          )}
+        </Dropzone>
         {this.state.previews.map((dataUri, i) => (
-          <img key={`image-${i}`} src={dataUri}/>
+          <a key={`image-${i}`} href={dataUri} download>
+            <img src={dataUri}/>
+          </a>
         ))}
       </div>
     );
