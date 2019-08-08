@@ -45,8 +45,6 @@ class App extends React.Component {
     }
 
     const width = jimg.getWidth(), height = jimg.getHeight();
-    // reduce color depth to 16 bit
-    jimg.posterize(16);
     for(var i = 0; i < numFrames; i++) {
       let frame = new GifFrame(width, height, { delayCentisecs: delay });
       frames.push(frame);
@@ -72,6 +70,7 @@ class App extends React.Component {
     }
 
     const codec = new GifCodec();
+    GifUtil.quantizeDekker(frames);
     let gif = await codec.encodeGif(frames, {loops: 0})
     return 'data:image/gif;base64,' + btoa(String.fromCharCode.apply(null, gif.buffer));
   }
@@ -134,7 +133,7 @@ class App extends React.Component {
           maxFileSize={5242880}
         />
         {this.state.previews.map((dataUri, i) => (
-          <img key={`image-${i}`} width="128" height="128" src={dataUri}/>
+          <img key={`image-${i}`} src={dataUri}/>
         ))}
       </div>
     );
