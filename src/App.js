@@ -164,7 +164,7 @@ class App extends React.Component {
         ): null}
         {this.state.previews.map((dataUri, i) => (
           <a key={`image-${i}`} href={dataUri} download>
-            <img src={dataUri}/>
+            <img alt="hype emoji" src={dataUri}/>
           </a>
         ))}
       </div>
