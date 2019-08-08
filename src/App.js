@@ -8,11 +8,11 @@ const { GifFrame, GifUtil, GifCodec } = require('gifwrap');
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { images: [], previews: [], frames: 10, delay: 10 };
+    this.state = { images: [], previews: [], frames: 10, delay: 10, rainbow: false };
     this.onDrop = this.onDrop.bind(this);
   }
 
-  onDrop(imageFiles, pictureDataURLs) {
+  onDrop(imageFiles) {
     this.setState({
       images: imageFiles,
     });
@@ -39,9 +39,9 @@ class App extends React.Component {
     if( Math.max(r, g, b) - Math.min(r, g, b) < 30 ) {
       console.log("not vibrant enough, adding red")
       // Not enough color contrast, have to tint first
-      // jimg.color([
-      //   { apply: 'red', params: [100] }
-      // ])
+      jimg.color([
+        { apply: 'red', params: [100] }
+      ])
     }
 
     const width = jimg.getWidth(), height = jimg.getHeight();
@@ -51,8 +51,18 @@ class App extends React.Component {
       let frame = new GifFrame(width, height, { delayCentisecs: delay });
       frames.push(frame);
 
+      // Initially there was actually a bug in the hue_shift
+      // The shift is persistent between frames, so shifting 360/numFrames
+      // each time cycles evenly through all colours
+
+      // However, multiplying this shift by i each time causes the colours
+      // to be a lot more erratic, and i liked the effect, so we're keeping it as the default.
+      let hue_shift = (360 / numFrames);
+      if( !this.state.rainbow ) {
+        hue_shift *= i;
+      }
       jimg.color([
-        { apply: 'hue', params: [(360 / numFrames) * i] },
+        { apply: 'hue', params: [hue_shift] },
       ])
 
       frame.bitmap.data = jimg.bitmap.data.slice();
@@ -84,19 +94,38 @@ class App extends React.Component {
     this.setState({delay: value});
   }
 
+  rainbowChange = (e) => {
+    let value = e.target.checked;
+    this.setState({rainbow: value});
+  }
+
+  regenerate = (e) => {
+    e.preventDefault();
+    this.onDrop(this.state.images);
+    return false;
+  }
+
   render() {
     return (
       <div>
-        <form>
-          <label>
-            Number of Frames:
-            <input type="number" name="frames" placeholder="10" onChange={this.framesChange} />
-          </label>
-          <label>
-            Frame delay (in centiseconds):
-            <input type="number" name="delay" placeholder="10" onChange={this.delayChange} />
-          </label>
-        </form>
+        {this.state.previews.length > 0 ? (
+          <form>
+            <label>
+              Number of Frames:
+              <input type="number" name="frames" placeholder="10" onChange={this.framesChange} />
+            </label>
+            <label>
+              Frame delay (in centiseconds):
+              <input type="number" name="delay" placeholder="10" onChange={this.delayChange} />
+            </label>
+            <label>
+              Rainbow:
+              <input type="checkbox" name="rainbow" onChange={this.rainbowChange} />
+            </label>
+
+            <button type="submit" name="submit" onClick={this.regenerate}>Regenerate</button>
+          </form>
+        ) : null}
         <ImageUploader
           withIcon={true}
           buttonText='Choose images'
