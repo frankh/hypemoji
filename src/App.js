@@ -1,5 +1,4 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import Dropzone from 'react-dropzone';
 import Jimp from 'jimp';
@@ -60,7 +59,7 @@ class App extends React.Component {
       console.log("not vibrant enough, adding red")
       // Not enough color contrast, have to tint first
       jimg.color([
-        { apply: 'red', params: [200] }
+        { apply: 'red', params: [100] }
       ])
     }
     await this.progress(0.07);
