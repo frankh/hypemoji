@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/hypify/static/css/main.2cce8147.chunk.css",
-    "main.js": "/hypify/static/js/main.7b9b5d6c.chunk.js",
-    "main.js.map": "/hypify/static/js/main.7b9b5d6c.chunk.js.map",
-    "runtime~main.js": "/hypify/static/js/runtime~main.fdc5cefd.js",
-    "runtime~main.js.map": "/hypify/static/js/runtime~main.fdc5cefd.js.map",
-    "static/css/2.e61fc129.chunk.css": "/hypify/static/css/2.e61fc129.chunk.css",
-    "static/js/2.ae60fd87.chunk.js": "/hypify/static/js/2.ae60fd87.chunk.js",
-    "static/js/2.ae60fd87.chunk.js.map": "/hypify/static/js/2.ae60fd87.chunk.js.map",
-    "index.html": "/hypify/index.html",
-    "precache-manifest.833e957b5281ef4e48a15130bfbf7150.js": "/hypify/precache-manifest.833e957b5281ef4e48a15130bfbf7150.js",
-    "service-worker.js": "/hypify/service-worker.js",
-    "static/css/2.e61fc129.chunk.css.map": "/hypify/static/css/2.e61fc129.chunk.css.map",
-    "static/css/main.2cce8147.chunk.css.map": "/hypify/static/css/main.2cce8147.chunk.css.map",
-    "static/media/UploadIcon.svg": "/hypify/static/media/UploadIcon.1cedb6e9.svg",
-    "static/media/logo.svg": "/hypify/static/media/logo.5d5d9eef.svg"
+    "main.css": "/hypemoji/static/css/main.2cce8147.chunk.css",
+    "main.js": "/hypemoji/static/js/main.fc493843.chunk.js",
+    "main.js.map": "/hypemoji/static/js/main.fc493843.chunk.js.map",
+    "runtime~main.js": "/hypemoji/static/js/runtime~main.9465835f.js",
+    "runtime~main.js.map": "/hypemoji/static/js/runtime~main.9465835f.js.map",
+    "static/css/2.e61fc129.chunk.css": "/hypemoji/static/css/2.e61fc129.chunk.css",
+    "static/js/2.ae60fd87.chunk.js": "/hypemoji/static/js/2.ae60fd87.chunk.js",
+    "static/js/2.ae60fd87.chunk.js.map": "/hypemoji/static/js/2.ae60fd87.chunk.js.map",
+    "index.html": "/hypemoji/index.html",
+    "precache-manifest.50b9207feba25e624d991c709724aa2b.js": "/hypemoji/precache-manifest.50b9207feba25e624d991c709724aa2b.js",
+    "service-worker.js": "/hypemoji/service-worker.js",
+    "static/css/2.e61fc129.chunk.css.map": "/hypemoji/static/css/2.e61fc129.chunk.css.map",
+    "static/css/main.2cce8147.chunk.css.map": "/hypemoji/static/css/main.2cce8147.chunk.css.map",
+    "static/media/UploadIcon.svg": "/hypemoji/static/media/UploadIcon.1cedb6e9.svg",
+    "static/media/logo.svg": "/hypemoji/static/media/logo.5d5d9eef.svg"
   }
 }
