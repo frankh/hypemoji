@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/hypemoji/precache-manifest.5f597f93093046f7f424f59cb9019870.js"
+  "/hypemoji/precache-manifest.1b6862dd9db7daa9cc099e12c75c9306.js"
 );
 
 self.addEventListener('message', (event) => {

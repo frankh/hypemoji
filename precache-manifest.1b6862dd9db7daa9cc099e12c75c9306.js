@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "94eb7a7db78f9d6c34842e0bd4307222",
+    "revision": "c3393afab6ec02500069afd19c52f51b",
     "url": "/hypemoji/index.html"
   },
   {
-    "revision": "e54061417e4d606faa40",
+    "revision": "9f8da1c4cb6aac1874ef",
     "url": "/hypemoji/static/css/main.e3ec0064.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/hypemoji/static/js/2.298fb971.chunk.js"
   },
   {
-    "revision": "e54061417e4d606faa40",
-    "url": "/hypemoji/static/js/main.e3a306ec.chunk.js"
+    "revision": "9f8da1c4cb6aac1874ef",
+    "url": "/hypemoji/static/js/main.4c6b4251.chunk.js"
   },
   {
     "revision": "bcba6b9ae73ae2993217",
