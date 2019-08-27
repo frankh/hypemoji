@@ -102,7 +102,7 @@ class App extends React.Component {
 
   framesChange = (e) => {
     let value = parseInt(e.target.value);
-    if( value <= 0 || value ) {
+    if( value <= 0 || !value ) {
       value = 1;
     }
 
