@@ -10,6 +10,17 @@ class App extends React.Component {
     super(props);
     this.state = { images: [], previews: [], frames: 10, delay: 10, rainbow: false, progress: null };
     this.onDrop = this.onDrop.bind(this);
+
+    document.onpaste = (pasteEvent) => {
+      var items = pasteEvent.clipboardData.items;
+
+      for (var i = 0; i < items.length; i++) {
+        if (items[i].type.indexOf("image") === 0) {
+          var blob = items[i].getAsFile();
+          this.onDrop([blob]);
+        }
+      }
+    };
   }
 
   sleep(ms) {
@@ -131,7 +142,7 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
+      <div onPaste={this.onPaste}>
         {this.state.previews.length > 0 ? (
           <form>
             <label>
@@ -153,7 +164,7 @@ class App extends React.Component {
         <Dropzone onDrop={this.onDrop} multiple={false}>
           {({getRootProps, getInputProps}) => (
             <div className="dropzone" {...getRootProps()}>
-              <p>Drag image here, or click to select</p>
+              <p>Drag image here, paste from clipboard, or click to select</p>
               <input {...getInputProps()} />
             </div>
           )}
