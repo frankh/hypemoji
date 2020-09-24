@@ -130,7 +130,6 @@ class App extends React.Component {
   }
 
   render() {
-    console.log('render ' + this.state.progress);
     return (
       <div>
         {this.state.previews.length > 0 ? (
