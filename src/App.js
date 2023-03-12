@@ -179,7 +179,7 @@ class App extends React.Component {
             <Line key="line_${i}" percent={p * 100} />
           ))}
           {this.state.previews.map((dataUri, i) => (
-            <a key={`image-${i}`} href={dataUri} download>
+            <a key={`image-${i}`} href={dataUri} download={`${this.state.images[i].name.split('.').slice(0, -1).join('.')}`}>
               <img alt="hype emoji" src={dataUri}/>
             </a>
           ))}
