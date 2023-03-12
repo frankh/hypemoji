@@ -1,10 +1,53 @@
 body {
-  margin: 0;
+  margin: 0em;
+  color: #2f323a;
+  background-color: #ffefe3;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.header {
+  display: inline-block;
+  margin-left: 3em;
+  font-weight: bold;
+}
+
+form {
+  margin-left: 6em;
+}
+
+input {
+  border-radius: 4px;
+  border: 1px solid #7f929a;
+  background-color: #fffdfc;
+
+  margin-left: 2px;
+}
+
+input:focus-visible {
+  outline: inherit;
+  border: 1px solid #2f323a;
+}
+
+button {
+  border-radius: 4px;
+  border: 1px solid #2f323a;
+  background-color: #48a9a8;
+  color: #2f323a;
+  font-size: 1.1em;
+  margin: 5px 1px;
+  padding: 2px 5px;
+}
+
+label {
+  display: block;
+}
+
+.result {
+  margin: 1em 3em;
 }
 
 code {
@@ -13,9 +56,10 @@ code {
 }
 
 .dropzone {
-	background-color: #67c198;
-    padding: 3em;
-    border: 1px dashed;
-    margin: 1em;
-    cursor: pointer;
+  background-color: #48a9a8;
+  border-radius: 1em;
+  padding: 3em;
+  border: 1px dashed;
+  margin: 1em;
+  cursor: pointer;
 }

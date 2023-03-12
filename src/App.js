@@ -8,7 +8,7 @@ import { GifFrame, GifUtil, GifCodec } from 'gifwrap';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { images: [], previews: [], frames: 10, delay: 10, rainbow: false, progress: null };
+    this.state = { images: [], previews: [], frames: 10, delay: 10, rainbow: false, progresses: [] };
     this.onDrop = this.onDrop.bind(this);
 
     document.onpaste = (pasteEvent) => {
@@ -30,37 +30,40 @@ class App extends React.Component {
   onDrop(imageFiles) {
     this.setState({
       images: imageFiles,
+      progresses: imageFiles.map(() => 0),
     });
 
     setTimeout(() => {
-      Promise.all(imageFiles.map((im) => (
-        this.hypify(im, this.state.frames, this.state.delay)
+      Promise.all(imageFiles.map((im, i) => (
+        this.hypify(i, im, this.state.frames, this.state.delay)
       ))).then((previews) => {
         this.setState({previews: previews});
         this.setState({
-          progress: null
+          progresses: []
         });
       });
     })
   }
 
-  async progress(n) {
+  async progress(i, n) {
+    let progresses = this.state.progresses;
+    progresses[i] = n;
     this.setState({
-      progress: n
+      progresses: progresses
     });
     await this.sleep(1);
   }
 
-  async hypify(image, numFrames, delay) {
+  async hypify(index, image, numFrames, delay) {
     console.log(`Hypifying with ${numFrames} frames and ${delay} delay`);
     const frames = [];
 
-    await this.progress(0);
+    await this.progress(index, 0);
     let jimg_tmp = await Jimp.read(await image.arrayBuffer());
     jimg_tmp.resize(1, 1);
     let averageColor = jimg_tmp.getPixelColor(0, 0);
 
-    await this.progress(0.05);
+    await this.progress(index, 0.05);
     let jimg = await Jimp.read(await image.arrayBuffer());
     if( jimg.getWidth() >= 128 || jimg.getHeight() >= 128 ) {
       jimg.scaleToFit(128, 128);
@@ -73,7 +76,7 @@ class App extends React.Component {
         { apply: 'red', params: [100] }
       ])
     }
-    await this.progress(0.07);
+    await this.progress(index, 0.07);
 
     const width = jimg.getWidth(), height = jimg.getHeight();
     for(var i = 0; i < numFrames; i++) {
@@ -97,16 +100,14 @@ class App extends React.Component {
       frame.bitmap.data = jimg.bitmap.data.slice();
       // Have to resolve this here for some reason or all frames are the same
       await jimg.getBase64Async('image/png');
-      await this.progress((i + 1) / numFrames);
+      await this.progress(index, (i + 1) / numFrames);
     }
 
     const codec = new GifCodec();
     GifUtil.quantizeDekker(frames);
     let gif = await codec.encodeGif(frames, {loops: 0})
 
-    this.setState({
-      progress: null
-    });
+    await this.progress(index, 1);
 
     return 'data:image/gif;base64,' + btoa(String.fromCharCode.apply(null, gif.buffer));
   }
@@ -142,41 +143,48 @@ class App extends React.Component {
 
   render() {
     return (
-      <div onPaste={this.onPaste}>
-        {this.state.previews.length > 0 ? (
-          <form>
-            <label>
-              Number of Frames:
-              <input type="number" name="frames" placeholder="10" onChange={this.framesChange} />
-            </label>
-            <label>
-              Frame delay (in centiseconds):
-              <input type="number" name="delay" placeholder="10" onChange={this.delayChange} />
-            </label>
-            <label>
-              Rainbow:
-              <input type="checkbox" name="rainbow" onChange={this.rainbowChange} />
-            </label>
+      <div>
+        <div className="header">
+          <h1>Hypemoji</h1>
+        </div>
+        <div onPaste={this.onPaste}>
+          {this.state.previews.length > 0 ? (
+            <form>
+              <label>
+                Number of Frames:
+                <input type="number" name="frames" min="2" max="100" placeholder="10" onChange={this.framesChange} />
+              </label>
+              <label>
+                Frame delay (in centiseconds):
+                <input type="number" name="delay" min="2" placeholder="10" onChange={this.delayChange} />
+              </label>
+              <label>
+                Rainbow:
+                <input type="checkbox" name="rainbow" onChange={this.rainbowChange} />
+              </label>
 
-            <button type="submit" name="submit" onClick={this.regenerate}>Regenerate</button>
-          </form>
-        ) : null}
-        <Dropzone onDrop={this.onDrop} multiple={false}>
-          {({getRootProps, getInputProps}) => (
-            <div className="dropzone" {...getRootProps()}>
-              <p>Drag image here, paste from clipboard, or click to select</p>
-              <input {...getInputProps()} />
-            </div>
-          )}
-        </Dropzone>
-        {this.state.progress != null ? (
-          <Line percent={this.state.progress * 100} />
-        ): null}
-        {this.state.previews.map((dataUri, i) => (
-          <a key={`image-${i}`} href={dataUri} download>
-            <img alt="hype emoji" src={dataUri}/>
-          </a>
-        ))}
+              <button type="submit" name="submit" onClick={this.regenerate}>Regenerate</button>
+            </form>
+          ) : null}
+          <Dropzone onDrop={this.onDrop} multiple={true}>
+            {({getRootProps, getInputProps}) => (
+              <div className="dropzone" {...getRootProps()}>
+                <p>Drag image here, paste from clipboard, or click to select</p>
+                <input {...getInputProps()} />
+              </div>
+            )}
+          </Dropzone>
+          <div className="result">
+          {(this.state.progresses || []).map((p, i) => (
+            <Line key="line_${i}" percent={p * 100} />
+          ))}
+          {this.state.previews.map((dataUri, i) => (
+            <a key={`image-${i}`} href={dataUri} download>
+              <img alt="hype emoji" src={dataUri}/>
+            </a>
+          ))}
+          </div>
+        </div>
       </div>
     );
   }
