@@ -1,15 +1,16 @@
 {
   "name": "hypemoji",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "dependencies": {
-    "gifwrap": "^0.9.2",
-    "jimp": "^0.16.1",
-    "rc-progress": "^3.1.0",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "react-dropzone": "^11.2.0",
-    "react-scripts": "3.0.1"
+    "gifwrap": "^0.10.1",
+    "jimp": "^0.22.7",
+    "path-browserify": "^1.0.1",
+    "rc-progress": "^3.4.1",
+    "react": "^17",
+    "react-dom": "^17",
+    "react-dropzone": "^14",
+    "react-scripts": "^4"
   },
   "scripts": {
     "start": "react-scripts start",
