@@ -4,6 +4,7 @@ import Dropzone from 'react-dropzone';
 import Jimp from 'jimp';
 import { Line } from 'rc-progress';
 import { GifFrame, GifUtil, GifCodec } from 'gifwrap';
+import { Buffer } from 'buffer';
 
 class App extends React.Component {
   constructor(props) {
@@ -55,9 +56,14 @@ class App extends React.Component {
   }
 
   async hypify(index, image, numFrames, delay) {
+    let frames = [];
+    if (image.type === "image/gif") {
+      const codec = new GifCodec();
+      let inputImg = await codec.decodeGif(new Uint8Array(await image.arrayBuffer()))
+      numFrames = inputImg.frames.length
+      frames = inputImg.frames
+    }
     console.log(`Hypifying with ${numFrames} frames and ${delay} delay`);
-    const frames = [];
-
     await this.progress(index, 0);
     let jimg_tmp = await Jimp.read(await image.arrayBuffer());
     jimg_tmp.resize(1, 1);
@@ -80,8 +86,18 @@ class App extends React.Component {
 
     const width = jimg.getWidth(), height = jimg.getHeight();
     for(var i = 0; i < numFrames; i++) {
-      let frame = new GifFrame(width, height, { delayCentisecs: delay });
-      frames.push(frame);
+      let frame;
+      let hue_shift = (360 / numFrames);
+
+      if (frames[i] === undefined) {
+        frame = new GifFrame(width, height, { delayCentisecs: delay });
+        frames.push(frame);
+      } else {
+        // We have an existing frame here
+        frame = frames[i]
+        jimg = new Jimp({...frame.bitmap});
+        hue_shift = (hue_shift * i) % 360;
+      }
 
       // Initially there was actually a bug in the hue_shift
       // The shift is persistent between frames, so shifting 360/numFrames
@@ -89,10 +105,10 @@ class App extends React.Component {
 
       // However, multiplying this shift by i each time causes the colours
       // to be a lot more erratic, and i liked the effect, so we're keeping it as the default.
-      let hue_shift = (360 / numFrames);
       if( !this.state.rainbow ) {
-        hue_shift *= i;
+        hue_shift = (hue_shift * i) % 360;
       }
+
       jimg.color([
         { apply: 'hue', params: [hue_shift] },
       ])
@@ -103,13 +119,14 @@ class App extends React.Component {
       await this.progress(index, (i + 1) / numFrames);
     }
 
+    debugger
     const codec = new GifCodec();
     GifUtil.quantizeDekker(frames);
     let gif = await codec.encodeGif(frames, {loops: 0})
 
     await this.progress(index, 1);
 
-    return 'data:image/gif;base64,' + btoa(String.fromCharCode.apply(null, gif.buffer));
+    return 'data:image/gif;base64,' + Buffer.from(gif.buffer).toString("base64")
   }
 
   framesChange = (e) => {
