@@ -119,7 +119,6 @@ class App extends React.Component {
       await this.progress(index, (i + 1) / numFrames);
     }
 
-    debugger
     const codec = new GifCodec();
     GifUtil.quantizeDekker(frames);
     let gif = await codec.encodeGif(frames, {loops: 0})
